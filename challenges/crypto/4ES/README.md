@@ -19,19 +19,19 @@ Instead, we can use a meet-in-the-middle (MITM) attack. That is, instead of comp
 So, we will have a map:
 
 $$
-\mathrm{ENC}_{k_1}(\mathrm{ENC}_{k_2}(\mathrm{pt})) \to (k_1, k_2)
+\mathrm{ENC}\_{k_1}(\mathrm{ENC}\_{k_2}(\mathrm{pt})) \to (k_1, k_2)
 $$
 
-And we test $\mathrm{DEC}_{k_4}(\mathrm{DEC}_{k_3}(\mathrm{ct}))$ until we find a match. At that point, we will have $(k_1, k_2, k_3, k_4)$ so that 
+And we test $\mathrm{DEC}\_{k_4}(\mathrm{DEC}\_{k_3}(\mathrm{ct}))$ until we find a match. At that point, we will have $(k_1, k_2, k_3, k_4)$ so that 
 
 $$
-\mathrm{ct} = \mathrm{ENC}_{k_1}(\mathrm{ENC}_{k_2}(\mathrm{ENC}_{k_3}(\mathrm{ENC}_{k_4}(\mathrm{pt}))))
+\mathrm{ct} = \mathrm{ENC}\_{k_1}(\mathrm{ENC}\_{k_2}(\mathrm{ENC}\_{k_3}(\mathrm{ENC}\_{k_4}(\mathrm{pt}))))
 $$
 
 and
 
 $$
-\mathrm{pt} = \mathrm{DEC}_{k_4}(\mathrm{DEC}_{k_3}(\mathrm{DEC}_{k_2}(\mathrm{DEC}_{k_1}(\mathrm{ct}))))
+\mathrm{pt} = \mathrm{DEC}\_{k_4}(\mathrm{DEC}\_{k_3}(\mathrm{DEC}\_{k_2}(\mathrm{DEC}\_{k_1}(\mathrm{ct}))))
 $$
 
 The solvers are single-threaded and not optimized. One of them is programmed in Go, which takes around 10 seconds to run; whereas the Python solver takes around 2 minutes:
