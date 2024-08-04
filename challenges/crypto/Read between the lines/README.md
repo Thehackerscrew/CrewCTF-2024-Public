@@ -39,7 +39,7 @@ c = sum(pow(m, e, n) for m in encoded_flag) % n
 So, in math terms we have:
 
 $$
-c = \sum_{m \in \mathtt{encoded\_flag}} m^e \mod{n}
+c = \sum_{m \in \mathtt{encoded\\_flag}} m^e \mod{n}
 $$
 
 Remember that each $m$ in `encoded_flag` is $i + \mathtt{0x1337}$ repeated $b_i$ times, so we have
