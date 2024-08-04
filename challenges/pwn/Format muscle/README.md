@@ -1,4 +1,4 @@
-# Format muscle
+# Format muscle (37 solves)
 
 - **Author: 7Rocky**
 - **Difficulty: easy**

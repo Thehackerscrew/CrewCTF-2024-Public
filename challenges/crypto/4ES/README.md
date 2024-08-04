@@ -1,4 +1,4 @@
-# 4ES
+# 4ES (90 solves)
 
 - **Author: 7Rocky**
 - **Difficulty: easy**

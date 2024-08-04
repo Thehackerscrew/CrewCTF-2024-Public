@@ -1,4 +1,4 @@
-# Read between the lines
+# Read between the lines (43 solves)
 
 - **Author: 7Rocky**
 - **Difficulty: easy**
