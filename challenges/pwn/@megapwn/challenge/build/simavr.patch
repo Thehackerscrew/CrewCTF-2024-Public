@@ -1,0 +1,207 @@
+diff --git a/Makefile.common b/Makefile.common
+index 3807180..0b96126 100644
+--- a/Makefile.common
++++ b/Makefile.common
+@@ -96,7 +96,7 @@ CFLAGS		+= -I${PREFIX}/include
+ LDFLAGS		+= -L/lib -L/local/lib
+ CFLAGS 		+= -DNO_COLOR
+ else
+-CFLAGS 		+= -fPIC
++#CFLAGS 		+= -fPIC
+ endif
+ 
+ CPPFLAGS	+= --std=gnu99 -Wall
+@@ -126,8 +126,8 @@ C_LIBDWARF	:= ${shell ls /usr/include/libdwarf/libdwarf.h >/dev/null 2>&1 && \
+ LD_LIBDWARF	:= ${shell ls /usr/include/libdwarf/libdwarf.h >/dev/null 2>&1 && \
+ 			echo -ldwarf}
+ 
+-CFLAGS		+= $(C_LIBELF) $(C_LIBDWARF)
+-LDFLAGS		+= $(LD_LIBELF) $(LD_LIBDWARF)
++#CFLAGS		+= $(C_LIBELF) $(C_LIBDWARF)
++#LDFLAGS		+= $(LD_LIBELF) $(LD_LIBDWARF)
+ 
+ ifeq (${WIN}, Msys)
+ LDFLAGS     	 += -lws2_32
+@@ -215,22 +215,6 @@ ifneq ($(E),)
+ endif
+ 	${E}$(AR) cru $@ ${filter %.o,$^} && $(RANLIB) $@
+ 
+-#
+-# Shared library (Linux)
+-#
+-${OBJ}/%.so.1: ${OBJ}/%.a
+-ifneq ($(E),)
+-	@echo SHARED $@
+-endif
+-	${E}$(CC) -o $@ -shared \
+-		-Wl,--whole-archive,-soname,${basename ${notdir $@}}.1 \
+-		${filter %.o %.a,$^} \
+-		 -Wl,--no-whole-archive \
+-		${filter-out -lsimavr, $(LDFLAGS)} ${EXTRA_LDFLAGS}
+-
+-${OBJ}/%.so: ${OBJ}/%.so.1
+-	ln -sf ${notdir $<} $@
+-
+ obj: ${OBJ}
+ 
+ ${OBJ}:
+diff --git a/examples/parts/Makefile b/examples/parts/Makefile
+index ba8bac6..ea22f7d 100644
+--- a/examples/parts/Makefile
++++ b/examples/parts/Makefile
+@@ -41,12 +41,6 @@ endif
+ #
+ ${OBJ}/${target}.a: ${objects}
+ ${target}: ${OBJ}/${target}.a
+-#
+-# Shared library (Linux only)
+-#
+-ifeq (${shell uname}, Linux)
+-${target}: ${OBJ}/${target}.so
+-endif
+ 
+ install: obj ${target}
+ 	$(MKDIR) $(DESTDIR)/include/simavr/parts
+diff --git a/simavr/Makefile b/simavr/Makefile
+index a754467..0cdb7af 100644
+--- a/simavr/Makefile
++++ b/simavr/Makefile
+@@ -54,9 +54,9 @@ ${OBJ}/libsimavr.a	:	${sim_o}
+ 
+ libsimavr	: config ${OBJ}/libsimavr.a
+ # shared library won't work that easily on non-linux
+-ifeq (${shell uname}, Linux)
+-libsimavr	: ${OBJ}/libsimavr.so
+-endif
++#ifeq (${shell uname}, Linux)
++#libsimavr	: ${OBJ}/libsimavr.so
++#endif
+ 
+ ${OBJ}/${target}.elf	: libsimavr
+ ${OBJ}/${target}.elf	: ${OBJ}/${target}.o
+diff --git a/simavr/cores/sim_mega16m1.c b/simavr/cores/sim_mega16m1.c
+index 0b82c1e..fc63329 100644
+--- a/simavr/cores/sim_mega16m1.c
++++ b/simavr/cores/sim_mega16m1.c
+@@ -21,7 +21,7 @@
+ 
+ #include "sim_avr.h"
+ 
+-#define SIM_VECTOR_SIZE	2
++#define SIM_VECTOR_SIZE	4
+ #define SIM_MMCU		"atmega16m1"
+ #define SIM_CORENAME	mcu_mega16m1
+ 
+diff --git a/simavr/cores/sim_megaxm1.h b/simavr/cores/sim_megaxm1.h
+index 6af2c1c..fa84d7e 100644
+--- a/simavr/cores/sim_megaxm1.h
++++ b/simavr/cores/sim_megaxm1.h
+@@ -143,11 +143,13 @@ const struct mcu_t SIM_CORENAME = {
+ 				.enable = AVR_IO_REGBIT(LINENIR, LENRXOK),
+ 				.raised = AVR_IO_REGBIT(LINSIR, LRXOK),
+ 				.vector = LIN_TC_vect,
++				.raise_sticky = 1,
+ 			},
+ 			.txc = {
+ 				.enable = AVR_IO_REGBIT(LINENIR, LENTXOK),
+ 				.raised = AVR_IO_REGBIT(LINSIR, LTXOK),
+ 				.vector = LIN_TC_vect,
++				.raise_sticky = 1,
+ 			},
+ 			/* .udrc doesn't exist in the LIN UART */
+ 		},
+diff --git a/simavr/sim/avr_uart.h b/simavr/sim/avr_uart.h
+index 107359e..77231d9 100644
+--- a/simavr/sim/avr_uart.h
++++ b/simavr/sim/avr_uart.h
+@@ -30,7 +30,7 @@ extern "C" {
+ 
+ #include "fifo_declare.h"
+ 
+-DECLARE_FIFO(uint16_t, uart_fifo, 64);
++DECLARE_FIFO(uint16_t, uart_fifo, 512);
+ 
+ /*
+  * The method of "connecting" the the UART from external code is to use 4 IRQS.
+diff --git a/simavr/sim/run_avr.c b/simavr/sim/run_avr.c
+index 1f914fd..d51d042 100644
+--- a/simavr/sim/run_avr.c
++++ b/simavr/sim/run_avr.c
+@@ -24,12 +24,16 @@
+ #include <libgen.h>
+ #include <string.h>
+ #include <signal.h>
++#include <fcntl.h>
++#include <unistd.h>
++#include <stdbool.h>
+ #include "sim_avr.h"
+ #include "sim_elf.h"
+ #include "sim_core.h"
+ #include "sim_gdb.h"
+ #include "sim_hex.h"
+ #include "sim_vcd_file.h"
++#include "avr_uart.h"
+ 
+ #include "sim_core_decl.h"
+ 
+@@ -90,6 +94,26 @@ sig_int(
+ 	exit(0);
+ }
+ 
++static void
++uart_stdout_hook(
++		struct avr_irq_t * irq,
++		uint32_t value,
++		void * param)
++{
++	write(1, &value, 1);
++}
++
++static bool uart_enabled;
++
++static void
++uart_xon_hook(
++		struct avr_irq_t * irq,
++		uint32_t value,
++		void * param)
++{
++	uart_enabled = true;
++}
++
+ int
+ main(
+ 		int argc,
+@@ -277,10 +301,32 @@ main(
+ 	signal(SIGINT, sig_int);
+ 	signal(SIGTERM, sig_int);
+ 
++	uint32_t flags = 0;
++	avr_ioctl(avr, AVR_IOCTL_UART_GET_FLAGS('0'), &flags);
++	flags &= ~AVR_UART_FLAG_STDIO;
++	avr_ioctl(avr, AVR_IOCTL_UART_SET_FLAGS('0'), &flags);
++
++	avr_irq_t *uart_in = avr_io_getirq(avr, AVR_IOCTL_UART_GETIRQ('0'), UART_IRQ_INPUT);
++	avr_irq_t *uart_out = avr_io_getirq(avr, AVR_IOCTL_UART_GETIRQ('0'), UART_IRQ_OUTPUT);
++	avr_irq_t *xon = avr_io_getirq(avr, AVR_IOCTL_UART_GETIRQ('0'), UART_IRQ_OUT_XON);
++
++	avr_irq_register_notify(uart_out, uart_stdout_hook, 0);
++	avr_irq_register_notify(xon, uart_xon_hook, 0);
++
++	fcntl(0, F_SETFL, fcntl(0, F_GETFL) | O_NONBLOCK);
++
+ 	for (;;) {
+ 		int state = avr_run(avr);
+ 		if (state == cpu_Done || state == cpu_Crashed)
+-			break;
++			exit(-1);
++
++		if(uart_enabled) {
++			char inchr;
++
++			if(read(0, &inchr, 1) == 1) {
++				avr_raise_irq(uart_in, inchr);
++			}
++		}
+ 	}
+ 
+ 	avr_terminate(avr);

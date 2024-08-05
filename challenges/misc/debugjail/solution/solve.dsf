@@ -1,0 +1,13 @@
+a 300
+mov dx,aee9
+mov ax,0
+mov ds,ax
+mov si,0200
+mov cx,8
+lodsw
+out dx,ax
+loop 30e
+int 3
+
+g =300
+Q

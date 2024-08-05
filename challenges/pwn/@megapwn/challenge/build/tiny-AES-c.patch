@@ -1,0 +1,48 @@
+diff --git a/aes.c b/aes.c
+index 4481f7b..119c7cb 100644
+--- a/aes.c
++++ b/aes.c
+@@ -36,6 +36,7 @@ NOTE:   String length must be evenly divisible by 16byte (str_len % 16 == 0)
+ /* Includes:                                                                 */
+ /*****************************************************************************/
+ #include <string.h> // CBC mode, for memset
++#include <avr/pgmspace.h>
+ #include "aes.h"
+ 
+ /*****************************************************************************/
+@@ -76,7 +77,7 @@ typedef uint8_t state_t[4][4];
+ // The lookup-tables are marked const so they can be placed in read-only storage instead of RAM
+ // The numbers below can be computed dynamically trading ROM for RAM - 
+ // This can be useful in (embedded) bootloader applications, where ROM is often limited.
+-static const uint8_t sbox[256] = {
++static PROGMEM const uint8_t sbox[256] = {
+   //0     1    2      3     4    5     6     7      8    9     A      B    C     D     E     F
+   0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
+   0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0,
+@@ -117,7 +118,7 @@ static const uint8_t rsbox[256] = {
+ 
+ // The round constant word array, Rcon[i], contains the values given by 
+ // x to the power (i-1) being powers of x (x is denoted as {02}) in the field GF(2^8)
+-static const uint8_t Rcon[11] = {
++static PROGMEM const uint8_t Rcon[11] = {
+   0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36 };
+ 
+ /*
+@@ -140,7 +141,7 @@ static uint8_t getSBoxValue(uint8_t num)
+   return sbox[num];
+ }
+ */
+-#define getSBoxValue(num) (sbox[(num)])
++#define getSBoxValue(num) (pgm_read_byte(&sbox[(num)]))
+ 
+ // This function produces Nb(Nr+1) round keys. The round keys are used in each round to decrypt the states. 
+ static void KeyExpansion(uint8_t* RoundKey, const uint8_t* Key)
+@@ -194,7 +195,7 @@ static void KeyExpansion(uint8_t* RoundKey, const uint8_t* Key)
+         tempa[3] = getSBoxValue(tempa[3]);
+       }
+ 
+-      tempa[0] = tempa[0] ^ Rcon[i/Nk];
++      tempa[0] = tempa[0] ^ pgm_read_byte(&Rcon[i/Nk]);
+     }
+ #if defined(AES256) && (AES256 == 1)
+     if (i % Nk == 4)
