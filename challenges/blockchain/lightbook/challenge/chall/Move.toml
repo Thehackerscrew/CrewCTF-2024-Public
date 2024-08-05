@@ -1,0 +1,12 @@
+[package]
+name = "Challenge"
+edition = "legacy" # edition = "legacy" to use legacy (pre-2024) Move
+version = "0.0.1"
+
+[dependencies]
+Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "mainnet-v1.27.4" }
+DeepBook = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/deepbook", rev = "mainnet-v1.27.4" }
+
+[addresses]
+challenge = "0x0"
+deepbook = "0xdee9"
