@@ -8,5 +8,5 @@ This hash function picks an array and returns it sum, and the sum if we replaced
 
 If we subtract the i-th value from the first value, the answer will be:
 
-$ x_i + x_j - ( x_i \oplus x_j )  = 2 (x_i & x_j)$. 
+$ x_i + x_{i+1} - ( x_i \oplus x_{i+1} )  = 2 (x_i  x_{i+1})$. 
 
