@@ -43,6 +43,8 @@ print(b''.join(card_data).decode('utf8'))
 
 The code isn't too clean, the best solution was provided by a participant (imo) (thank you warlocksmurf).
 
+![image](https://github.com/user-attachments/assets/059c6e1b-2e5f-41f8-ab95-27641b96dccf)
+
 Flag: `crew{s3al_mak3_flag_l0ng_t0_c0v3r_th3s3_bl0cks!}`
 
 Reading Material: https://github.com/RfidResearchGroup/proxmark3/blob/master/doc/new_frame_format.md
