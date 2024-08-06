@@ -1,6 +1,8 @@
-# Writeup
+Community writeups (probably better than this one):
 
-## Pins
+- https://mwlik.github.io/2024-08-05-crewctf-2024-sniff-challenge/
+
+# Pins
 
 The first step is to look at the photographs, identify the components and use their documentation to work out the role of each logic analyser pin.
 
@@ -39,7 +41,7 @@ Find_/_Replace({'option':'Extended (\\n, \\t, \\x...)','string':'\\n'},'',true,f
 From_Hex('Auto')
 ```
 
-## Display
+# Display
 
 Identifying the Inky variant can be a little difficult:
 
