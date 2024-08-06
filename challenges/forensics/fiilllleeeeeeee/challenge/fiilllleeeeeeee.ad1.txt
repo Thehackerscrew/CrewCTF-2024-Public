@@ -1,0 +1,40 @@
+﻿Created By AccessData® FTK® Imager 4.7.1.2 
+
+Case Information: 
+Acquired using: ADI4.7.1.2
+Case Number: 
+Evidence Number: 
+Unique Description: 
+Examiner: 
+Notes: 
+
+--------------------------------------------------------------
+
+Information for C:\Users\oshaw\Documents\development\CrewCTF-2024\forensics\fiilllleeeeeeee\fiilllleeeeeeee.ad1:
+[Computed Hashes]
+ MD5 checksum:    71ef56e1499ae2c24d87e8ff1bca544a
+ SHA1 checksum:   8a0c4034430cb740b01b28864ae678495c962c8b
+
+Image information:
+ Acquisition started:   Tue Apr 16 18:40:55 2024
+ Acquisition finished:  Tue Apr 16 18:40:57 2024
+ Segment list:
+  C:\Users\oshaw\Documents\development\CrewCTF-2024\forensics\fiilllleeeeeeee\fiilllleeeeeeee.ad1
+
+Image Verification Results:
+ Verification started:  Tue Apr 16 18:40:57 2024
+ Verification finished: Tue Apr 16 18:40:57 2024
+ MD5 checksum:    71ef56e1499ae2c24d87e8ff1bca544a : verified
+ SHA1 checksum:   8a0c4034430cb740b01b28864ae678495c962c8b : verified
+
+Image Verification Results:
+ Verification started:  Sun Aug  4 11:06:05 2024
+ Verification finished: Sun Aug  4 11:06:05 2024
+ MD5 checksum:    71ef56e1499ae2c24d87e8ff1bca544a : verified
+ SHA1 checksum:   8a0c4034430cb740b01b28864ae678495c962c8b : verified
+
+Image Verification Results:
+ Verification started:  Sun Aug  4 11:07:16 2024
+ Verification finished: Sun Aug  4 11:07:16 2024
+ MD5 checksum:    71ef56e1499ae2c24d87e8ff1bca544a : verified
+ SHA1 checksum:   8a0c4034430cb740b01b28864ae678495c962c8b : verified
