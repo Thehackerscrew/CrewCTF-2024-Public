@@ -1,0 +1,9 @@
+Download link:
+https://mega.nz/file/Bm1FxaJD#IO0h0qvUmkN8sGU9umXTIfEp5p8KA4r3B6IaqbfLLYE
+
+[crymem.zip]
+- dist/
+  - aes_sample.c
+    C source code (for having encrypted flag)
+  - memdump.raw
+    raw memory dump (including info about executing aes_sample)
