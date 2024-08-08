@@ -1,8 +1,12 @@
 
 
+Community writeups:
+
+- https://discord.com/channels/959047109015904306/1268933477575819316/1270856012139597834 (invite: https://discord.gg/rW3dj7GhDq)
+
 # Understanding
 
-The following uses a base address of `0x00400000`
+The following uses a base address of `0x00400000`. You may also benefit from reading the source assembly (it is fairly well commented) and generation script.
 
 ## Data
 
