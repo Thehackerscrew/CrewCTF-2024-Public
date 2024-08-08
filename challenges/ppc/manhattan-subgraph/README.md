@@ -1,3 +1,9 @@
+# Manhattan-Subgraph (7 solves)
+
+I've been playing with some cubes, but someone scrambled the data up and now I cannot recover it. Can you help me?
+
+# Writeup
+
 
 A 4-cycle in the given graph always corresponds to a face of a cube.
 In a 4-cycle, we also know that opposite edges have the same direction, and adjacent edges have different direction.
