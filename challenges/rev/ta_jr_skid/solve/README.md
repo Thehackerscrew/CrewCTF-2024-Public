@@ -557,6 +557,6 @@ Finally we'll use the final `node`'s path work our way back from the `comparison
 Running the script we get the output:
 
 ```
-crew{h3_n3v3r_4rr1v3d_9c6ddf}
+crew{a6b4291e38}
 ```
 
