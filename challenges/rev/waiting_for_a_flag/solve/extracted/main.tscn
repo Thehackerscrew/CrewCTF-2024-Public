@@ -1,0 +1,137 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://main.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://bg4klk431lb3l" path="res://tiles.png" id="2"]
+[ext_resource type="Script" path="res://camera.gd" id="3"]
+
+[sub_resource type="TileSetAtlasSource" id="1"]
+texture = ExtResource("2")
+texture_region_size = Vector2i(443, 320)
+0:1/0 = 0
+0:1/0/script = null
+0:2/0 = 0
+0:2/0/script = null
+0:3/0 = 0
+0:3/0/script = null
+0:4/0 = 0
+0:4/0/script = null
+0:5/0 = 0
+0:5/0/script = null
+0:6/0 = 0
+0:6/0/script = null
+0:7/0 = 0
+0:7/0/script = null
+0:8/0 = 0
+0:8/0/script = null
+0:9/0 = 0
+0:9/0/script = null
+0:10/0 = 0
+0:10/0/script = null
+0:11/0 = 0
+0:11/0/script = null
+0:12/0 = 0
+0:12/0/script = null
+0:13/0 = 0
+0:13/0/script = null
+0:14/0 = 0
+0:14/0/script = null
+0:0/0 = 0
+0:0/0/script = null
+0:15/0 = 0
+0:15/0/script = null
+0:16/0 = 0
+0:16/0/script = null
+0:17/0 = 0
+0:17/0/script = null
+0:18/0 = 0
+0:18/0/script = null
+0:20/0 = 0
+0:20/0/script = null
+0:19/0 = 0
+0:19/0/script = null
+0:21/0 = 0
+0:21/0/script = null
+0:24/0 = 0
+0:24/0/script = null
+0:25/0 = 0
+0:25/0/script = null
+0:26/0 = 0
+0:26/0/script = null
+0:27/0 = 0
+0:27/0/script = null
+0:28/0 = 0
+0:28/0/script = null
+0:29/0 = 0
+0:29/0/script = null
+0:37/0 = 0
+0:37/0/script = null
+0:36/0 = 0
+0:36/0/script = null
+0:35/0 = 0
+0:35/0/script = null
+0:34/0 = 0
+0:34/0/script = null
+0:33/0 = 0
+0:33/0/script = null
+0:32/0 = 0
+0:32/0/script = null
+0:31/0 = 0
+0:31/0/script = null
+0:30/0 = 0
+0:30/0/script = null
+0:23/0 = 0
+0:23/0/script = null
+0:22/0 = 0
+0:22/0/script = null
+0:38/0 = 0
+0:38/0/script = null
+0:39/0 = 0
+0:39/0/script = null
+0:40/0 = 0
+0:40/0/script = null
+0:41/0 = 0
+0:41/0/script = null
+0:42/0 = 0
+0:42/0/script = null
+0:43/0 = 0
+0:43/0/script = null
+0:44/0 = 0
+0:44/0/script = null
+0:45/0 = 0
+0:45/0/script = null
+0:46/0 = 0
+0:46/0/script = null
+0:47/0 = 0
+0:47/0/script = null
+0:48/0 = 0
+0:48/0/script = null
+0:49/0 = 0
+0:49/0/script = null
+script = null
+
+[sub_resource type="TileSet" id="2"]
+tile_shape = 1
+tile_size = Vector2i(443, 256)
+sources/1337 = SubResource("1")
+script = null
+
+[node name="main" type="Node2D"]
+script = ExtResource("1")
+
+[node name="tilemap" type="TileMap" parent="."]
+y_sort_enabled = true
+position = Vector2(-1, 0)
+tile_set = SubResource("2")
+format = 2
+layer_0/y_sort_enabled = true
+
+[node name="camera" type="Camera2D" parent="."]
+position = Vector2(221.5, 128)
+zoom = Vector2(0.5, 0.5)
+script = ExtResource("3")
+
+[node name="canvas" type="CanvasLayer" parent="camera"]
+
+[node name="label" type="Label" parent="camera/canvas"]
+offset_right = 40.0
+offset_bottom = 23.0
