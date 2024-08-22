@@ -10,9 +10,9 @@ AES is very robust, but let's quadruple its power!
 
 ## Writeup
 
-We are given a Python script that encrypts the flag 4 times with AES. The 4 AES keys are SHA256 hashes of three-word choices from a given alphabet: `crew_AES*4=$!?`. We are also given a plaintext `AES_AES_AES_AES!` and its ciphertext.
+We are given a Python script that encrypts the flag 4 times with AES. The 4 AES keys are SHA256 hashes of 3-letter choices from a given alphabet: `crew_AES*4=$!?`. We are also given a plaintext `AES_AES_AES_AES!` and its ciphertext.
 
-In brief, we have 3-word keys from a 14-word alphabet that are hashed and 4 encryptions. A naïve brute force attack would take up to $(14^3)^4 = 14^{12}$ possibilities, that is $2^{45} \lt 14^{12} \lt 2^{46}$, which is not affordable.
+In brief, we have 3-letter keys from a 14-letter alphabet that are hashed and 4 encryptions. A naïve brute force attack would take up to $(14^3)^4 = 14^{12}$ possibilities, that is $2^{45} \lt 14^{12} \lt 2^{46}$, which is not affordable.
 
 Instead, we can use a meet-in-the-middle (MITM) attack. That is, instead of computing 4 forward encryptions, we can compute 2 forward encryptions, save them in a look-up table and then perform 2 backward decryptions until we find a match. The complexity of this approach will be $2 \cdot (14^3)^2 = 2 \cdot 14^6$ possibilities, which is affordable because $2^{23} \lt 2 \cdot 14^6 \lt 2^{24}$.
 
